@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator with Dark Mode</title>
+    <style>
+        :root {
+            --bg-color: #f5f5f5;
+            --calculator-bg: #fff;
+            --display-bg: #f0f0f0;
+            --button-bg: #e0e0e0;
+            --button-hover: #d0d0d0;
+            --button-text: #333;
+            --display-text: #333;
+            --border-color: #ddd;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode {
+            --bg-color: #121212;
+            --calculator-bg: #1e1e1e;
+            --display-bg: #2d2d2d;
+            --button-bg: #3d3d3d;
+            --button-hover: #4d4d4d;
+            --button-text: #f0f0f0;
+            --display-text: #f0f0f0;
+            --border-color: #444;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: var(--bg-color);
+            transition: background-color 0.3s ease;
+        }
+        
+        .calculator {
+            background-color: var(--calculator-bg);
+            border-radius: 10px;
+            box-shadow: 0 5px 15px var(--shadow-color);
+            padding: 20px;
+            width: 300px;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .display {
+            background-color: var(--display-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            margin-bottom: 15px;
+            padding: 10px;
+            text-align: right;
+            font-size: 24px;
+            height: 40px;
+            overflow: hidden;
+            color: var(--display-text);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        
+        button {
+            background-color: var(--button-bg);
+            border: none;
+            border-radius: 5px;
+            color: var(--button-text);
+            cursor: pointer;
+            font-size: 18px;
+            padding: 15px;
+            transition: background-color 0.2s, color 0.3s ease;
+        }
+        
+        button:hover {
+            background-color: var(--button-hover);
+        }
+        
+        .operator {
+            background-color: #f8a51b;
+            color: white;
+        }
+        
+        .operator:hover {
+            background-color: #e59317;
+        }
+        
+        .equals {
+            background-color: #4caf50;
+            color: white;
+        }
+        
+        .equals:hover {
+            background-color: #429a46;
+        }
+        
+        .clear {
+            background-color: #f44336;
+            color: white;
+        }
+        
+        .clear:hover {
+            background-color: #e53935;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            border: none;
+            border-radius: 20px;
+            padding: 8px 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            background-color: var(--button-hover);
+        }
+
+        .theme-toggle i {
+            margin-right: 5px;
+        }
+
+        .calculator-title {
+            margin-bottom: 20px;
+            color: var(--display-text);
+            transition: color 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <button id="themeToggle" class="theme-toggle" onclick="toggleTheme()">
+        <i id="themeIcon">🌙</i> Dark Mode
+    </button>
+    
+    <h2 class="calculator-title">Simple Calculator</h2>
+    
+    <div class="calculator">
+        <div class="display" id="display">0</div>
+        <div class="buttons">
+            <button class="clear" onclick="clearDisplay()">C</button>
+            <button onclick="appendToDisplay('(')">(</button>
+            <button onclick="appendToDisplay(')')">)</button>
+            <button class="operator" onclick="appendToDisplay('/')">/</button>
+            
+            <button onclick="appendToDisplay('7')">7</button>
+            <button onclick="appendToDisplay('8')">8</button>
+            <button onclick="appendToDisplay('9')">9</button>
+            <button class="operator" onclick="appendToDisplay('*')">×</button>
+            
+            <button onclick="appendToDisplay('4')">4</button>
+            <button onclick="appendToDisplay('5')">5</button>
+            <button onclick="appendToDisplay('6')">6</button>
+            <button class="operator" onclick="appendToDisplay('-')">-</button>
+            
+            <button onclick="appendToDisplay('1')">1</button>
+            <button onclick="appendToDisplay('2')">2</button>
+            <button onclick="appendToDisplay('3')">3</button>
+            <button class="operator" onclick="appendToDisplay('+')">+</button>
+            
+            <button onclick="appendToDisplay('0')">0</button>
+            <button onclick="appendToDisplay('.')">.</button>
+            <button onclick="backspace()">⌫</button>
+            <button class="equals" onclick="calculate()">=</button>
+        </div>
+    </div>
+
+    <script>
+        let display = document.getElementById('display');
+        let isDarkMode = false;
+        
+        function appendToDisplay(value) {
+            if (display.textContent === '0' && value !== '.') {
+                display.textContent = value;
+            } else {
+                display.textContent += value;
+            }
+        }
+        
+        function clearDisplay() {
+            display.textContent = '0';
+        }
+        
+        function backspace() {
+            if (display.textContent.length === 1) {
+                display.textContent = '0';
+            } else {
+                display.textContent = display.textContent.slice(0, -1);
+            }
+        }
+        
+        function calculate() {
+            try {
+                // Replace × with * for JavaScript evaluation
+                let expression = display.textContent.replace(/×/g, '*');
+                let result = eval(expression);
+                
+                // Handle division by zero
+                if (!isFinite(result)) {
+                    display.textContent = 'Error';
+                } else {
+                    // Format the result to avoid extremely long decimals
+                    display.textContent = parseFloat(result.toFixed(10)).toString();
+                }
+            } catch (error) {
+                display.textContent = 'Error';
+            }
+        }
+
+        function toggleTheme() {
+            isDarkMode = !isDarkMode;
+            const themeToggle = document.getElementById('themeToggle');
+            const themeIcon = document.getElementById('themeIcon');
+            
+            if (isDarkMode) {
+                document.body.classList.add('dark-mode');
+                themeToggle.innerHTML = '<i id="themeIcon">☀️</i> Light Mode';
+            } else {
+                document.body.classList.remove('dark-mode');
+                themeToggle.innerHTML = '<i id="themeIcon">🌙</i> Dark Mode';
+            }
+        }
+
+        // Check for user's preferred color scheme
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            toggleTheme(); // Automatically switch to dark mode if user prefers it
+        }
+    </script>
+</body>
+</html>
